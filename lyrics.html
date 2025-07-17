@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karaoke Lyrics with Sound</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .karaoke-container {
+            max-width: 800px;
+            width: 100%;
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #ff6b6b;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .song-info {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #aaa;
+            font-style: italic;
+        }
+        
+        .lyrics {
+            font-size: 24px;
+            line-height: 1.6;
+            text-align: center;
+        }
+        
+        .line {
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .line.active {
+            background-color: #333;
+            transform: scale(1.02);
+        }
+        
+        .word {
+            transition: color 0.3s ease;
+        }
+        
+        .word.active {
+            color: #4ecdc4;
+            font-weight: bold;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 15px;
+        }
+        
+        button {
+            background-color: #4ecdc4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #3aa8a0;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #333;
+            height: 5px;
+            border-radius: 5px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: #4ecdc4;
+            border-radius: 5px;
+            width: 0%;
+        }
+        
+        .volume-control {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+            gap: 10px;
+        }
+        
+        .time-display {
+            text-align: center;
+            margin-top: 10px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="karaoke-container">
+        <h1>Imagine</h1>
+        <div class="song-info">by John Lennon</div>
+        
+        <!-- Audio element (hidden) -->
+        <audio id="audioPlayer" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+        
+        <div class="time-display">
+            <span id="currentTime">0:00</span> / <span id="totalTime">0:00</span>
+        </div>
+        
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar" id="progress"></div>
+        </div>
+        
+        <div class="lyrics" id="lyrics">
+            <div class="line" data-start="0">
+                <span class="word" data-start="0" data-end="2">Imagine</span>
+                <span class="word" data-start="2" data-end="4">there's</span>
+                <span class="word" data-start="4" data-end="6">no</span>
+                <span class="word" data-start="6" data-end="8">heaven</span>
+            </div>
+            <div class="line" data-start="8">
+                <span class="word" data-start="8" data-end="10">It's</span>
+                <span class="word" data-start="10" data-end="12">easy</span>
+                <span class="word" data-start="12" data-end="14">if</span>
+                <span class="word" data-start="14" data-end="16">you</span>
+                <span class="word" data-start="16" data-end="18">try</span>
+            </div>
+            <div class="line" data-start="20">
+                <span class="word" data-start="20" data-end="22">No</span>
+                <span class="word" data-start="22" data-end="24">hell</span>
+                <span class="word" data-start="24" data-end="26">below</span>
+                <span class="word" data-start="26" data-end="28">us</span>
+            </div>
+            <div class="line" data-start="28">
+                <span class="word" data-start="28" data-end="30">Above</span>
+                <span class="word" data-start="30" data-end="32">us</span>
+                <span class="word" data-start="32" data-end="34">only</span>
+                <span class="word" data-start="34" data-end="36">sky</span>
+            </div>
+            <div class="line" data-start="40">
+                <span class="word" data-start="40" data-end="42">Imagine</span>
+                <span class="word" data-start="42" data-end="44">all</span>
+                <span class="word" data-start="44" data-end="46">the</span>
+                <span class="word" data-start="46" data-end="48">people</span>
+            </div>
+            <div class="line" data-start="48">
+                <span class="word" data-start="48" data-end="50">Living</span>
+                <span class="word" data-start="50" data-end="52">for</span>
+                <span class="word" data-start="52" data-end="54">today</span>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button id="playBtn">Play</button>
+            <button id="pauseBtn">Pause</button>
+            <button id="resetBtn">Reset</button>
+        </div>
+        
+        <div class="volume-control">
+            <span>Volume:</span>
+            <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="0.7">
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM elements
+            const audioPlayer = document.getElementById('audioPlayer');
+            const lyrics = document.getElementById('lyrics');
+            const lines = lyrics.querySelectorAll('.line');
+            const words = lyrics.querySelectorAll('.word');
+            const playBtn = document.getElementById('playBtn');
+            const pauseBtn = document.getElementById('pauseBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const progressBar = document.getElementById('progress');
+            const progressContainer = document.getElementById('progressContainer');
+            const volumeControl = document.getElementById('volumeControl');
+            const currentTimeDisplay = document.getElementById('currentTime');
+            const totalTimeDisplay = document.getElementById('totalTime');
+            
+            // Set initial volume
+            audioPlayer.volume = volumeControl.value;
+            
+            // Update total time display when metadata is loaded
+            audioPlayer.addEventListener('loadedmetadata', function() {
+                const duration = audioPlayer.duration;
+                totalTimeDisplay.textContent = formatTime(duration);
+            });
+            
+            // Update current time display
+            audioPlayer.addEventListener('timeupdate', function() {
+                const currentTime = audioPlayer.currentTime;
+                currentTimeDisplay.textContent = formatTime(currentTime);
+                updateHighlighting(currentTime);
+                updateProgressBar(currentTime);
+            });
+            
+            // Play button
+            playBtn.addEventListener('click', function() {
+                audioPlayer.play();
+            });
+            
+            // Pause button
+            pauseBtn.addEventListener('click', function() {
+                audioPlayer.pause();
+            });
+            
+            // Reset button
+            resetBtn.addEventListener('click', function() {
+                audioPlayer.currentTime = 0;
+                updateHighlighting(0);
+            });
+            
+            // Volume control
+            volumeControl.addEventListener('input', function() {
+                audioPlayer.volume = volumeControl.value;
+            });
+            
+            // Click on progress bar to seek
+            progressContainer.addEventListener('click', function(e) {
+                const rect = progressContainer.getBoundingClientRect();
+                const pos = (e.clientX - rect.left) / rect.width;
+                audioPlayer.currentTime = pos * audioPlayer.duration;
+            });
+            
+            // Format time as MM:SS
+            function formatTime(seconds) {
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+            }
+            
+            // Update progress bar
+            function updateProgressBar(currentTime) {
+                const duration = audioPlayer.duration || 1; // Avoid division by zero
+                const progressPercent = (currentTime / duration) * 100;
+                progressBar.style.width = `${progressPercent}%`;
+            }
+            
+            // Update highlighting based on current time
+            function updateHighlighting(time) {
+                // Reset all highlights
+                words.forEach(word => word.classList.remove('active'));
+                lines.forEach(line => line.classList.remove('active'));
+                
+                // Highlight current line
+                let currentLine;
+                for (let i = lines.length - 1; i >= 0; i--) {
+                    if (time >= parseFloat(lines[i].dataset.start)) {
+                        currentLine = lines[i];
+                        currentLine.classList.add('active');
+                        break;
+                    }
+                }
+                
+                // Highlight current words in the active line
+                if (currentLine) {
+                    const lineWords = currentLine.querySelectorAll('.word');
+                    lineWords.forEach(word => {
+                        const wordStart = parseFloat(word.dataset.start);
+                        const wordEnd = parseFloat(word.dataset.end);
+                        
+                        if (time >= wordStart && time < wordEnd) {
+                            word.classList.add('active');
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
